@@ -1,57 +1,78 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int buyPizza = 0;
+        int buyHamburger = 0;
+        int nothing = 0;
+        int customer = 0;
+        ArrayList<String> orderList = new ArrayList<>();
+        Queue<String> foodList = new LinkedList<>();
 
-        String s;
-
-        //입력이 없을때 까지 반복
-        while ((s = br.readLine()) != null) {
-            st = new StringTokenizer(s);
-
-            //StringTokenizer Exception 방지 token이 비었으면 종료
-            if (!st.hasMoreTokens()) {
+        while (true) {
+            // 입력
+            String[] order = scanner.nextLine().split(" ");
+            // 만약 입력이 E라면 종료
+            if (order[0].equals("E")) {
                 break;
             }
 
-            //첫번째 인자 입력받음
-            int N = Integer.parseInt(st.nextToken());
-            //중복확인 배열선언 배열의 크기는 N+1
-            int[] res = new int[N + 1];
-
-            //다음 토큰 저장 (두번째 인자)
-            int prev = Integer.parseInt(st.nextToken());
-            //처음 jolly는 true
-            boolean jolly = true;
-
-
-            //1부터 N-1까지 반복
-            for (int i = 1; i < N; i++) {
-                //다음 토큰 저장(세번째 인자)
-                int curr = Integer.parseInt(st.nextToken());
-                //절대값 저장 (두번째인자 - 세번째인자), 절대값 양수 반환으로 순서는 상관없음
-                int diff = Math.abs(curr - prev);
-
-                //절대값이 0보다 작거나 N보다 크고, res[diff] == 1 (중복) 일땐 유쾌한점퍼가 아님. jolly = false하고 바로 빠져나감
-                if (diff <= 0 || diff >= N || res[diff] == 1) {
-                    jolly = false;
-                    break;
+            // 주문 또는 음식 넣기
+            if (order[0].equals("O")) {
+                if (customer >= 2) {
+                    nothing++;
+                } else {
+                    customer++;
+                    orderList.add(order[1]);
                 }
-
-                //위에 조건문에 걸리지 않는 다면 res[diff] = 1 값 처리
-                res[diff] = 1;
-                //현재 인자를 기본인자로 저장
-                prev = curr;
+            } else if (order[0].equals("F")) {
+                foodList.add(order[1]);
             }
 
-            //jolly가 true면 유쾌한 점퍼, 아니면 유쾌한 점퍼가 아님
-            System.out.println(jolly ? "Jolly" : "Not jolly");
+            // 음식이 없으면 다음
+            if (foodList.isEmpty()) {
+                continue;
+            }
 
+            int index = 0;
+            while (!foodList.isEmpty() && index < orderList.size()) {
+                if (orderList.get(index).equals("Any")) {
+                    orderList.remove(index);
+                    String a = foodList.poll();
+                    if (a.equals("Hamburger")) {
+                        buyHamburger++;
+                    } else {
+                        buyPizza++;
+                    }
+                    customer--;
+                } else if (orderList.get(index).equals("Pizza")) {
+                    if (foodList.contains("Pizza")) {
+                        orderList.remove(index);
+                        foodList.remove("Pizza");
+                        buyPizza++;
+                        customer--;
+                    } else {
+                        index++;
+                    }
+                } else {
+                    if (foodList.contains("Hamburger")) {
+                        orderList.remove(index);
+                        foodList.remove("Hamburger");
+                        buyHamburger++;
+                        customer--;
+                    } else {
+                        index++;
+                    }
+                }
+            }
         }
+
+        System.out.println("Pizza: " + buyPizza);
+        System.out.println("Hamburger: " + buyHamburger);
+        System.out.println("Nothing: " + (nothing + orderList.size()));
     }
 }
