@@ -1,78 +1,62 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int buyPizza = 0;
-        int buyHamburger = 0;
-        int nothing = 0;
-        int customer = 0;
-        ArrayList<String> orderList = new ArrayList<>();
-        Queue<String> foodList = new LinkedList<>();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-        while (true) {
-            // 입력
-            String[] order = scanner.nextLine().split(" ");
-            // 만약 입력이 E라면 종료
-            if (order[0].equals("E")) {
+
+        boolean Jolly, sort;
+        int curr, diff;
+
+
+        String s;
+
+
+        while((s = br.readLine()) != null) {
+            st = new StringTokenizer(s);
+
+            Jolly = true;
+            sort = true;
+
+            if (!st.hasMoreTokens()) {
+                Jolly = false;
                 break;
             }
 
-            // 주문 또는 음식 넣기
-            if (order[0].equals("O")) {
-                if (customer >= 2) {
-                    nothing++;
-                } else {
-                    customer++;
-                    orderList.add(order[1]);
-                }
-            } else if (order[0].equals("F")) {
-                foodList.add(order[1]);
-            }
 
-            // 음식이 없으면 다음
-            if (foodList.isEmpty()) {
-                continue;
-            }
+            int N = Integer.parseInt(st.nextToken());
 
-            int index = 0;
-            while (!foodList.isEmpty() && index < orderList.size()) {
-                if (orderList.get(index).equals("Any")) {
-                    orderList.remove(index);
-                    String a = foodList.poll();
-                    if (a.equals("Hamburger")) {
-                        buyHamburger++;
-                    } else {
-                        buyPizza++;
-                    }
-                    customer--;
-                } else if (orderList.get(index).equals("Pizza")) {
-                    if (foodList.contains("Pizza")) {
-                        orderList.remove(index);
-                        foodList.remove("Pizza");
-                        buyPizza++;
-                        customer--;
-                    } else {
-                        index++;
-                    }
-                } else {
-                    if (foodList.contains("Hamburger")) {
-                        orderList.remove(index);
-                        foodList.remove("Hamburger");
-                        buyHamburger++;
-                        customer--;
-                    } else {
-                        index++;
-                    }
+            int prev = Integer.parseInt(st.nextToken());
+            int[] res = new int[N + 1];
+
+
+
+            for (int i = 1; i < N; i++) {
+                curr = Integer.parseInt(st.nextToken());
+                diff = Math.abs(curr - prev);
+
+
+                if (diff <= 0 || diff >= N || res[diff] == 1) {
+                    Jolly = false;
+                    break;
                 }
+
+                if(curr <= prev) {
+                    sort = false;
+                }
+
+                res[diff] = 1;
+                prev = curr;
             }
+            if(Jolly) {
+                if(sort)System.out.println("Jolly");
+                else System.out.println("Little Jolly");
+            } else System.out.println("Not Jolly");
         }
-
-        System.out.println("Pizza: " + buyPizza);
-        System.out.println("Hamburger: " + buyHamburger);
-        System.out.println("Nothing: " + (nothing + orderList.size()));
     }
 }
