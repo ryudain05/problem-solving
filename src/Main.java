@@ -1,40 +1,47 @@
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.Stack;
 
 public class Main {
-
     public static void main(String[] args) throws IOException {
-
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         String s;
+        StringBuilder sb;
 
-        PriorityQueue<String> q = new PriorityQueue<>(Comparator.reverseOrder());
+        while ((s = br.readLine()) != null){
+            Stack<String> stack = new Stack<>();
+            String[] arr = s.split("");
 
-        while (true) {
+            for (int i = 0; i < s.length(); i++) {
 
-            s = br.readLine();
 
-            if (s == null || s.isEmpty()) {
-                break;
+                if(!arr[i].equals("*")) {
+                    stack.push(arr[i]);
+                }
+
+                else if(arr[i].equals("*") && !stack.isEmpty()) {
+                    stack.pop();
+                }
+
+                if(stack.size() > 10) {
+                    if(!arr[i].equals("*")) {
+                        stack.pop();
+                    }
+                }
             }
 
-            if (!q.isEmpty() && s.equals("*")) {
-                q.poll();
-            } else q.offer(s);
+            sb = new StringBuilder();
+            while (!stack.isEmpty()) {
+                sb.append(stack.pop());
+            }
+
+            sb.reverse();
 
 
-        }
-
-        while (!q.isEmpty()) {
-            System.out.println(q.poll());
+            System.out.print(sb);
+            System.out.println();
         }
     }
 }
