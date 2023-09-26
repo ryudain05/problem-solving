@@ -3,31 +3,34 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
-        // 입력을 받기 위한 BufferedReader 생성
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String[] lines = {"`1234567890-=", "QWERTYUIOP[]\\", "ASDFGHJKL;", "ZXCVBNM,./"};
 
-        String N = br.readLine();
-        String M = br.readLine();
+        while (true) {
+            String input = reader.readLine();
+            if (input == null) break;
 
-        int[] countN = new int[26];
-        int[] countM = new int[26];
+            for (int i = 0; i < input.length(); i++) {
+                char currentChar = input.charAt(i);
+                boolean decodeOk = false;
 
+                for (String line : lines) {
+                    if (line.indexOf(currentChar) != -1) {
+                        int index = line.indexOf(currentChar);
+                        System.out.print(line.charAt(index - 1));
+                        decodeOk = true;
+                        break;
+                    }
+                }
 
-        for (int i = 0; i < N.length(); i++) {
-            countN[N.charAt(i) - 'a']++;
+                if (!decodeOk) {
+                    System.out.print(" ");
+                }
+            }
+
+            System.out.println();
         }
-
-        for (int i = 0; i < M.length(); i++) {
-            countM[M.charAt(i) - 'a']++;
-        }
-
-        int res = 0;
-
-        for (int i = 0; i < 26; i++) {
-            res += Math.abs(countN[i] - countM[i]);
-        }
-
-        System.out.println(res);
     }
 }
