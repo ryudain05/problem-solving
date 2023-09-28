@@ -1,54 +1,32 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
-        String s = br.readLine();
+        String s = br.readLine().toUpperCase();
+        StringBuilder sb = new StringBuilder();
 
-        System.out.println(result(s, N));
-    }
-
-    public static String result(String s, int max) {
-        StringBuilder result = new StringBuilder();
-
-        for (int i = 0; i < s.length(); ) {
-            String str = null;
-            int num = 0;
-            int len = 1;
-
-            for (; len <= max && i + len <= s.length(); ++len) {
-                String substr = s.substring(i, i + len);
-                int count = countRe(s, substr, i);
-
-                if (count > num || (count == num && len > str.length())) {
-                    str = substr;
-                    num = count;
-                }
+        for(int i = 0; i < s.length(); i++){
+            if(s.charAt(i) == ' ') {
+                sb.append(" ");
             }
-
-            if (str.length() > 1)
-                result.append(str.toUpperCase()).append(num);
-            else
-                result.append(str).append(num);
-
-            i += str.length() * num;
+            else if(N > 26) {
+                N = N % 26;
+                char ch = (char) (s.charAt(i) + N);
+                sb.append(ch);
+            }
+            else {
+                char ch = (char) (s.charAt(i) + N);
+                if(ch > 'Z') {
+                    ch = (char) (ch - 26);
+                    sb.append(ch);
+                } else sb.append(ch);
+            }
         }
 
-        return result.toString();
-    }
-
-    private static int countRe(String s, String str, int start) {
-        int count;
-
-        for (count = 0; start + str.length() * (count + 1) <= s.length(); ++count)
-            if (!str.equals(s.substring(start + str.length() * count,
-                    start + str.length() * (count + 1))))
-                break;
-
-        return count;
+        System.out.println(sb.toString());
     }
 }
