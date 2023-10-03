@@ -4,94 +4,61 @@ import java.io.InputStreamReader;
 
 public class Main {
 
+    private static boolean isNumeric(char x) {
+        return x >= '0' && x <= '9';
+    }
+
+    private static boolean matchExact(String s1, String s2) {
+        return s1.equals(s2);
+    }
+
+    private static boolean matchNumeric(String s1, String s2) {
+        int i = 0;
+        int j = 0;
+        while (i < s1.length() && j < s2.length()) {
+            while (i < s1.length() && !isNumeric(s1.charAt(i))) {
+                i++;
+            }
+            while (j < s2.length() && !isNumeric(s2.charAt(j))) {
+                j++;
+            }
+            if (i < s1.length() && j < s2.length() && s1.charAt(i) != s2.charAt(j)) {
+                return false;
+            }
+            i++;
+            j++;
+        }
+        return i >= s1.length() && j >= s2.length();
+    }
+
     public static void main(String[] args) throws IOException {
-        // BufferedReader를 사용하여 버퍼 입력을 처리합니다.
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        // 주어진 암호화 텍스트
-        String pltxt = "the quick brown fox jumps over the lazy dog";
+        int n = Integer.parseInt(reader.readLine().trim());
+        int t = 0;
 
-        // 입력된 라인을 저장할 2차원 문자 배열
-        char[][] line = new char[100][100];
-
-        // 문자 매핑을 저장할 배열
-        char[] map = new char[256];
-        char[] inv = new char[256];
-
-        // 테스트 케이스의 수를 읽어옵니다.
-        int num_cases = Integer.parseInt(reader.readLine().trim());
-        reader.readLine(); // 빈 줄 skip
-
-        // 각 테스트 케이스를 처리합니다.
-        while (num_cases-- > 0) {
-            int num_lines = 0;
-            String inputLine;
-
-            // 빈 줄이 나올 때까지 라인을 읽어옵니다.
-            while (!(inputLine = reader.readLine()).isEmpty()) {
-                line[num_lines] = inputLine.toCharArray();
-                num_lines++;
+        while (n > 0) {
+            StringBuilder s1 = new StringBuilder();
+            for (int i = 0; i < n; i++) {
+                s1.append(reader.readLine()).append("\n");
             }
-
-            // 가능한 매핑이 있는지 확인하는 플래그
-            boolean possible = false;
-
-            // 각 라인에 대해 매핑을 시도합니다.
-            for (int i = 0; i < num_lines; i++) {
-                // 암호화 텍스트와 길이가 같은 경우에만 확인합니다.
-                if (pltxt.length() != line[i].length) {
-                    continue;
-                }
-
-                // 매핑을 초기화합니다.
-                for (int c = 'a'; c <= 'z'; c++) {
-                    map[c] = '\0';
-                    inv[c] = '\0';
-                }
-                map[' '] = ' ';
-
-                // 현재 라인에 대해 유효한 매핑이 가능한지 확인합니다.
-                boolean validMapping = true;
-                for (int j = 0; j < line[i].length; j++) {
-                    if ((map[line[i][j]] != '\0' && map[line[i][j]] != pltxt.charAt(j))
-                            || (inv[pltxt.charAt(j)] != '\0' && inv[pltxt.charAt(j)] != line[i][j])) {
-                        // 매핑이 유효하지 않으면 루프를 빠져나갑니다.
-                        validMapping = false;
-                        break;
-                    } else {
-                        // 매핑이 유효하면 매핑 정보를 저장합니다.
-                        map[line[i][j]] = pltxt.charAt(j);
-                        inv[pltxt.charAt(j)] = line[i][j];
-                    }
-                }
-
-                // 유효한 매핑이면 가능한 플래그를 설정하고 루프를 빠져나갑니다.
-                if (validMapping) {
-                    possible = true;
-                    break;
-                }
+            int m = Integer.parseInt(reader.readLine().trim());
+            StringBuilder s2 = new StringBuilder();
+            for (int i = 0; i < m; i++) {
+                s2.append(reader.readLine()).append("\n");
             }
-
-            // 가능한 매핑이 있으면 결과를 출력합니다.
-            if (possible) {
-                for (int i = 0; i < num_lines; i++) {
-                    for (int j = 0; j < line[i].length; j++) {
-                        System.out.print(map[line[i][j]]);
-                    }
-                    System.out.println();
-                }
+            t++;
+            System.out.print("Run #" + t + ": ");
+            if (matchExact(s1.toString(), s2.toString())) {
+                System.out.println("Accepted");
+            } else if (matchNumeric(s1.toString(), s2.toString())) {
+                System.out.println("Presentation Error");
             } else {
-                // 가능한 매핑이 없으면 "No solution."을 출력합니다.
-                System.out.println("No solution.");
+                System.out.println("Wrong Answer");
             }
-
-            // 더 많은 테스트 케이스가 있는지 확인하고, 있다면 빈 줄을 출력합니다.
-            if (num_cases > 0) {
-                System.out.println();
-            }
+            n = Integer.parseInt(reader.readLine().trim());
         }
 
-        // 입력 스트림을 닫습니다.
         reader.close();
     }
 }
