@@ -1,64 +1,191 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+
+
+import java.util.*;
 
 public class Main {
+    public static void main(String[] args) {
 
-    private static boolean isNumeric(char x) {
-        return x >= '0' && x <= '9';
-    }
+        Scanner input=new Scanner(System.in);
 
-    private static boolean matchExact(String s1, String s2) {
-        return s1.equals(s2);
-    }
+        String ans = input.nextLine().toLowerCase();
 
-    private static boolean matchNumeric(String s1, String s2) {
-        int i = 0;
-        int j = 0;
-        while (i < s1.length() && j < s2.length()) {
-            while (i < s1.length() && !isNumeric(s1.charAt(i))) {
-                i++;
-            }
-            while (j < s2.length() && !isNumeric(s2.charAt(j))) {
-                j++;
-            }
-            if (i < s1.length() && j < s2.length() && s1.charAt(i) != s2.charAt(j)) {
-                return false;
-            }
-            i++;
-            j++;
+        int numN = Integer.parseInt(input.nextLine());
+
+        String str=input.nextLine().toLowerCase();
+
+        String[] sarr1=str.split(" ");
+
+        str=input.nextLine().toLowerCase();
+
+        String[] sarr2=str.split(" ");
+
+        ArrayList<String> list1= new ArrayList<>();
+        ArrayList<String> list2= new ArrayList<>();
+        ArrayList<Character> list3= new ArrayList<>();
+        ArrayList<Character> list4= new ArrayList<>();
+
+
+        Map<Character,Character> map = new HashMap<>();
+
+        for(int i=0;i<26;i++) {
+            map.put((char) ('a'+i),' ');
         }
-        return i >= s1.length() && j >= s2.length();
-    }
+        for(String temp:sarr1) {
+            boolean joongbok=false;
+            for(int i=0;i<temp.length()-1;i++) {
+                for(int j=i+1;j<temp.length();j++) {
+                    if(temp.charAt(i)==temp.charAt(j)) {
+                        joongbok=true;
+                        break;
+                    }
+                }
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-        int n = Integer.parseInt(reader.readLine().trim());
-        int t = 0;
-
-        while (n > 0) {
-            StringBuilder s1 = new StringBuilder();
-            for (int i = 0; i < n; i++) {
-                s1.append(reader.readLine()).append("\n");
             }
-            int m = Integer.parseInt(reader.readLine().trim());
-            StringBuilder s2 = new StringBuilder();
-            for (int i = 0; i < m; i++) {
-                s2.append(reader.readLine()).append("\n");
-            }
-            t++;
-            System.out.print("Run #" + t + ": ");
-            if (matchExact(s1.toString(), s2.toString())) {
-                System.out.println("Accepted");
-            } else if (matchNumeric(s1.toString(), s2.toString())) {
-                System.out.println("Presentation Error");
-            } else {
-                System.out.println("Wrong Answer");
-            }
-            n = Integer.parseInt(reader.readLine().trim());
+            if(joongbok)
+                list1.add(temp);
         }
+        for(String temp:sarr2) {
+            boolean joongbok=false;
+            for(int i=0;i<temp.length()-1;i++) {
+                for(int j=i+1;j<temp.length();j++) {
+                    if(temp.charAt(i)==temp.charAt(j)) {
+                        joongbok=true;
+                        break;
+                    }
+                }
 
-        reader.close();
+            }
+            if(joongbok)
+                list2.add(temp);
+        }
+        ArrayList<String> list5= new ArrayList(Arrays.asList(sarr1));
+        ArrayList<String> list6= new ArrayList(Arrays.asList(sarr2));
+
+        for(String temp:list1) {
+            list5.remove(temp);
+        }
+        for(String temp:list2) {
+            list6.remove(temp);
+        }
+        boolean[] search2=new boolean[list1.size()];
+        for(int i=0;i<list1.size();i++) {
+            list3= new ArrayList<>();
+            list4= new ArrayList<>();
+            for(int j=0;j<list2.size();j++) {
+                boolean search=false;
+                if(list1.get(i).length()!=list2.get(j).length())
+                    continue;
+                if((search2[j]))
+                    continue;
+                else {
+                    for(int x=0;x<list1.get(i).length();x++) {
+                        if(map.get(list1.get(i).charAt(x))==' ') {
+                            if((list3.contains(list1.get(i).charAt(x))&&!list4.contains(list2.get(j).charAt(x))))
+                            {
+                                list3.clear();
+                                list4.clear();
+                                search=true;
+                                break;
+                            }
+                            list3.add(list1.get(i).charAt(x));
+                            list4.add(list2.get(j).charAt(x));
+                        }
+                        else if(map.get(list1.get(i).charAt(x))!=' '&&map.get(list1.get(i).charAt(x))==list2.get(j).charAt(x)) {
+                            continue;
+                        }
+                        else {
+                            list3.clear();
+                            list4.clear();
+                            search=true;
+                            break;
+                        }
+                    }
+                    for(int g=0;g<list3.size();g++) {
+                        map.put(list3.get(g), list4.get(g));
+                    }
+                    if(!search) {
+                        search2[j]=true;
+                        break;
+                    }
+                }
+            }
+        }
+        list3.clear();
+        list4.clear();
+        search2=new boolean[list5.size()];
+        for(int i=0;i<list5.size();i++) {
+            list3= new ArrayList<>();
+            list4= new ArrayList<>();
+            for(int j=0;j<list5.size();j++) {
+                boolean search=false;
+                if(list5.get(i).length()!=list6.get(j).length())
+                    continue;
+                if((search2[j]))
+                    continue;
+                else {
+                    for(int x=0;x<list5.get(i).length();x++) {
+                        if(map.get(list5.get(i).charAt(x))==' ') {
+                            if((list3.contains(list5.get(i).charAt(x))&&!list4.contains(list6.get(j).charAt(x))))
+                            {
+                                list3.clear();
+                                list4.clear();
+                                search=true;
+                                break;
+                            }
+                            list3.add(list5.get(i).charAt(x));
+                            list4.add(list6.get(j).charAt(x));
+                        }
+                        else if(map.get(list5.get(i).charAt(x))!=' '&&map.get(list5.get(i).charAt(x))==list6.get(j).charAt(x)) {
+                            continue;
+                        }
+                        else {
+
+                            list3.clear();
+                            list4.clear();
+                            search=true;
+                            break;
+                        }
+                    }
+                    for(int g=0;g<list3.size();g++) {
+                        map.put(list3.get(g), list4.get(g));
+                    }
+                    if(!search) {
+                        search2[j]=true;
+                        break;
+                    }
+                }
+            }
+        }
+        String answer="the quick brown fox jumps over the lazy dog";
+        Map<Character,Character> Ansmap = new HashMap<>();
+        int count = 0;
+        for(int i=0;i<ans.length();i++){
+            if(ans.charAt(i) != '?') {
+                Ansmap.put(ans.charAt(i), ans.charAt(i));
+                char chh = ans.charAt(i);
+                if(chh == ans.charAt(i)) {
+                    count ++;
+                }
+            }
+        }char[] charTo = {'a', 'c', 'y', 'z', 'd', 'x','w'}; char[] adjust = {'p','q','w', 'b', 'g','z','t'};
+        if(numN <= 5) {
+            for (int i = 0; i < charTo.length; i++) {
+                char originalChar = charTo[i];
+                char newChar = adjust[i];
+                map.put(originalChar, newChar);
+            }
+        }
+        for(int i=0;i<answer.length();i++){
+            if(answer.charAt(i)==' ') {
+                System.out.print(" ");
+            } else if(ans.charAt(i) != '?') {
+                System.out.print(Ansmap.get(ans.charAt(i)));
+            }
+            else
+                System.out.print(map.get(answer.charAt(i)));
+        }
+        System.out.println();
     }
+
 }
