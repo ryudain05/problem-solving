@@ -1,28 +1,23 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
-class Person implements Comparable<Person> {
+
+class Person {
+
     String name;
     int age;
+    String sex;
     int order;
 
-    public Person(String name, int age, int order) {
+    public Person (String name, int age, String sex, int order) {
         this.name = name;
         this.age = age;
+        this.sex = sex;
         this.order = order;
     }
 
-    @Override
-    public int compareTo(Person person) {
-        int AgeCompare = Integer.compare(person.age, this.age);
-        if(AgeCompare == 0){
-            return Integer.compare(this.order, person.order);
-        }
-        return AgeCompare;
-    }
 }
 
 public class Main {
@@ -33,19 +28,28 @@ public class Main {
 
         int N = Integer.parseInt(br.readLine());
 
-        Person[] people = new Person[N];
+        List<Person> people = new ArrayList<>();
 
-        for (int i = 0; i < N; i++) {
+
+
+        for(int i=0; i<N; i++) {
+            if(i >= 500) break;
             st = new StringTokenizer(br.readLine());
             String name = st.nextToken();
             int age = Integer.parseInt(st.nextToken());
-            people[i] = new Person(name, age, i);
+            String sex = st.nextToken();
+            people.add(new Person(name, age, sex, i));
         }
 
-        Arrays.sort(people);
+        Collections.sort(people, Comparator.
+                comparing((Person pe) -> pe.age, Comparator.reverseOrder())
+                .thenComparing((Person pe) -> pe.sex)
+                .thenComparing((Person pe) -> pe.order)
+        );
 
-        for (int i = 0; i < N; i++) {
-            System.out.println(people[i].name);
+        for(Person person: people) {
+            System.out.println(person.name+" "+person.age+" "+person.sex);
         }
+
     }
 }
