@@ -1,55 +1,43 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.*;
-
-
-class Person {
-
-    String name;
-    int age;
-    String sex;
-    int order;
-
-    public Person (String name, int age, String sex, int order) {
-        this.name = name;
-        this.age = age;
-        this.sex = sex;
-        this.order = order;
-    }
-
-}
+import java.util.Scanner;
+import java.math.BigInteger;
 
 public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+        while (true) {
+            String tempa = scanner.next();
+            String tempb = scanner.next();
 
-        int N = Integer.parseInt(br.readLine());
+            if (tempa.equals("0") && tempb.equals("0")) {
+                break;
+            }
 
-        List<Person> people = new ArrayList<>();
+            BigInteger a = new BigInteger(tempa);
+            BigInteger b = new BigInteger(tempb);
 
+            BigInteger fib0 = BigInteger.ONE;
+            BigInteger fib1 = BigInteger.ONE;
 
+            BigInteger i = BigInteger.ONE;
+            while (fib0.compareTo(a) < 0) {
+                BigInteger temp = fib1;
+                fib1 = fib1.add(fib0);
+                fib0 = temp;
+                i = i.add(BigInteger.ONE);
+            }
 
-        for(int i=0; i<N; i++) {
-            if(i >= 500) break;
-            st = new StringTokenizer(br.readLine());
-            String name = st.nextToken();
-            int age = Integer.parseInt(st.nextToken());
-            String sex = st.nextToken();
-            people.add(new Person(name, age, sex, i));
+            int result = 0;
+            while (fib0.compareTo(b) <= 0) {
+                result++;
+                BigInteger temp = fib1;
+                fib1 = fib1.add(fib0);
+                fib0 = temp;
+            }
+
+            System.out.println(result);
         }
 
-        Collections.sort(people, Comparator.
-                comparing((Person pe) -> pe.age, Comparator.reverseOrder())
-                .thenComparing((Person pe) -> pe.sex)
-                .thenComparing((Person pe) -> pe.order)
-        );
-
-        for(Person person: people) {
-            System.out.println(person.name+" "+person.age+" "+person.sex);
-        }
-
+        scanner.close();
     }
 }
