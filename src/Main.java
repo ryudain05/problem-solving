@@ -15,29 +15,23 @@ public class Main {
 
             BigInteger a = new BigInteger(tempa);
             BigInteger b = new BigInteger(tempb);
-
-            BigInteger fib0 = BigInteger.ONE;
             BigInteger fib1 = BigInteger.ONE;
+            BigInteger fib2 = BigInteger.ONE;
+            BigInteger fib = fib1.add(fib2);
 
-            BigInteger i = BigInteger.ONE;
-            while (fib0.compareTo(a) < 0) {
-                BigInteger temp = fib1;
-                fib1 = fib1.add(fib0);
-                fib0 = temp;
-                i = i.add(BigInteger.ONE);
+            int count = 0;
+
+            while (fib.compareTo(b) <= 0) {
+                if (fib.compareTo(a) >= 0) {
+                    count++;
+                }
+
+                fib1 = fib2;
+                fib2 = fib;
+                fib = fib1.add(fib2);
             }
 
-            int result = 0;
-            while (fib0.compareTo(b) <= 0) {
-                result++;
-                BigInteger temp = fib1;
-                fib1 = fib1.add(fib0);
-                fib0 = temp;
-            }
-
-            System.out.println(result);
+            System.out.println(count);
         }
-
-        scanner.close();
     }
 }
