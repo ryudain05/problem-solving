@@ -1,60 +1,60 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+    static int count = 0;
+    static int n;
+    static int[] board;
 
-        for (int i = 0; i < N; i++) {
-            int M = Integer.parseInt(br.readLine());
-            List<Integer> list = fibo(M);
-            System.out.println(sum(list, M));
+    // 유망한지 판단하는 함수
+    static boolean promising(int cdx) {
+        // 같은 열이면 안되고, 대각선상에 있어서도 안 된다.
+        for (int i = 0; i < cdx; i++) {
+            if (board[cdx] == board[i] || cdx - i == Math.abs(board[cdx] - board[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // nqueen 알고리즘 수행
+    static void nqueen(int cdx) {
+        // cdx가 마지막 행까지 수행하고 여기까지 오면, 찾기 완료
+        if (cdx == n) {
+            count++;
+            printBoard(); // 현재 퀸의 배치를 출력
+            return;
+        }
+
+        for (int i = 0; i < n; i++) {
+            board[cdx] = i; // cdx번째 행, i번째 열에 queen을 놓아본다.
+            // 이후 그 행에 둔 것에 대한 유망성을 판단한다.
+            if (promising(cdx)) { // 그 자리에 두어도 괜찮았다면,
+                nqueen(cdx + 1); // 그 다음 행에 대해 퀸을 놓는 것을 해 본다.
+            }
         }
     }
 
-    static List<Integer> fibo(int m) {
-        List<Integer> list = new ArrayList<>();
-
-        int a = 1;
-        int b = 2;
-        int c;
-
-        list.add(a);
-        list.add(b);
-
-        while (true) {
-            c = a + b;
-            if (c <= m) {
-                list.add(c);
-            } else {
-                break;
+    // 현재 퀸의 배치를 출력하는 함수
+    static void printBoard() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i] == j) {
+                    System.out.print("Q ");
+                } else {
+                    System.out.print("* ");
+                }
             }
-            a = b;
-            b = c;
+            System.out.println();
         }
-
-        Collections.sort(list, Collections.reverseOrder());
-        return list;
+        System.out.println();
     }
 
-    static int sum(List<Integer> fibo, int m) {
-        int sum = 0;
-
-        for (int num : fibo) {
-            if (num <= m) {
-                sum += num * num;
-                m -= num;
-            }
-            if (m == 0) {
-                break;
-            }
-        }
-        return sum;
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        n = scanner.nextInt();
+        board = new int[n];
+        nqueen(0);
+        System.out.println("Total solutions: " + count);
     }
 }
