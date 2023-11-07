@@ -1,66 +1,69 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+
+
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int[][] miro = new int[4][4];
-    static boolean[][] path = new boolean[4][4];
-    static int[] dx = {0, 1}; // 오른쪽, 아래쪽
-    static int[] dy = {1, 0}; // 오른쪽, 아래쪽
 
-    static StringBuilder sb = new StringBuilder();
+    static void solve(int n, int w_sum, int[] weights, int DP[][]) {
+        for (int i = 1; i < weights.length; i++) {
+            DP[i][weights[i]] = 1;
+            for (int j = 1; j <= w_sum; j++) {
+                if ((j - weights[i] > 0) && DP[i - 1][j - weights[i]] > 0) {
+                    if (DP[i - 1][j - weights[i]] + 1 <= (n / 2) + 1)
+                        DP[i][j] = DP[i - 1][j - weights[i]] + 1;
+                } else if ((j - weights[i]) < 0 && DP[i - 1][j] != 0)
+                    DP[i][j] = DP[i - 1][j];
+                else if (DP[i - 1][j] != 0)
+                    DP[i][j] = DP[i - 1][j];
+            }
+        }
+
+    }
+
+    static void getAnswer(int n, int w_sum, int DP[][]) {
+        ArrayList<Integer> li = new ArrayList<>();
+        for (int i = 0; i < w_sum; i++) {
+            if (DP[n][i] == (n / 2) + 1 || DP[n][i] == (n / 2))
+                li.add(i);
+        }
+        int max = Integer.MAX_VALUE;
+        int s1 = 0;
+        int s2 = 0;
+        for (int what : li) {
+            int diff = Math.abs((w_sum - what) - what);
+            if (diff < max) {
+                s1 = what;
+                s2 = w_sum - what;
+                max = diff;
+            }
+        }
+        if (s1 < s2) System.out.printf(s1 + " " + s2);
+        else System.out.println(s2 + " " + s1);
+        System.out.println();
+    }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        for (int i = 0; i < 4; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < 4; j++) {
-                miro[i][j] = Integer.parseInt(st.nextToken());
+        int tc = Integer.parseInt(br.readLine());
+        for (int tcN = 0; tcN < tc; tcN++) {
+            String blank = br.readLine(); //����
+            int n = Integer.parseInt(br.readLine());
+            int w_sum = 0;
+            int weights[] = new int[n + 1];
+            for (int i = 1; i < n + 1; i++) {
+                weights[i] = Integer.parseInt(br.readLine());
+                w_sum += weights[i];
             }
+
+            int DP[][] = new int[n + 1][w_sum + 1];
+            solve(n, w_sum, weights, DP);
+
+            getAnswer(n, w_sum, DP);
+            System.out.println();
         }
 
-        BFS(0, 0);
-        printPath();
-        System.out.println(sb);
     }
 
-    static void BFS(int startX, int startY) {
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[]{startX, startY});
-        path[startX][startY] = true;
-
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int x = current[0];
-            int y = current[1];
-
-
-            if (y + 1 < 4 && miro[x][y + 1] == 1 && !path[x][y + 1]) {
-                queue.offer(new int[]{x, y + 1});
-                path[x][y + 1] = true;
-            }
-
-            else if (x + 1 < 4 && miro[x + 1][y] == 1 && !path[x + 1][y]) {
-                queue.offer(new int[]{x + 1, y});
-                path[x + 1][y] = true;
-            }
-        }
-    }
-
-    static void printPath() {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (path[i][j]) {
-                    sb.append("1").append(" ");
-                } else {
-                    sb.append("0").append(" ");
-                }
-            }
-            sb.append("\n");
-        }
-    }
 }
