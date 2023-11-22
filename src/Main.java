@@ -1,60 +1,73 @@
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static int grid[][];
-    static boolean visited[];
-    static int n;
+    static class Edge implements Comparable<Edge> {
+        int from, to, cost;
 
-    static boolean isEven() { //¦�� üũ
-        for(int i = 0; i < n; i++) {
-            int cnt = 0;
-            for(int j = 0; j < n; j++) {
-                if(grid[i][j] > 0)
-                    cnt += grid[i][j];
-            }
-            if(cnt %2 == 1)
-                return false;
+        Edge(int from, int to, int cost) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
         }
-        return true;
-    }
 
-
-    static boolean isOdd() {
-        int tmp = 0;
-        for(int i = 0; i < n; i++) {
-            int cnt = 0;
-            for(int j = 0; j < n; j++) {
-                if(grid[i][j] == 1)
-                    cnt += 1;
-            }
-            if(cnt%2 == 1)
-                tmp++;
-            if (tmp > 2)
-                return false;
+        @Override
+        public int compareTo(Edge o) {
+            return this.cost - o.cost;
         }
-        return true;
     }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        n = Integer.parseInt(br.readLine());
-        grid = new int[n][n];
-        visited = new boolean[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        for(int i = 0; i < n; i++) {
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        List<Edge>[] graph = new ArrayList[N+1];
+        for(int i=0; i<=N; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        int total = 0;
+        for(int i=0; i<M; i++) {
             st = new StringTokenizer(br.readLine());
-            for(int j = 0; j < n; j++) {
-                grid[i][j] = Integer.parseInt(st.nextToken());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int cost = Integer.parseInt(st.nextToken());
+
+            graph[from].add(new Edge(from, to, cost));
+            graph[to].add(new Edge(to, from, cost));
+            total += cost;
+        }
+
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        boolean[] visited = new boolean[N+1];
+
+        // start from the node 1
+        for(Edge e : graph[1]) {
+            pq.offer(e);
+        }
+        visited[1] = true;
+
+        int mst = 0;
+        while(!pq.isEmpty()) {
+            Edge e = pq.poll();
+
+            if(visited[e.to]) continue;
+            visited[e.to] = true;
+
+            mst += e.cost;
+
+            for(Edge ne : graph[e.to]) {
+                if(!visited[ne.to]) {
+                    pq.offer(ne);
+                }
             }
         }
-        if(isEven()) System.out.println("O");
-        else {
-            if(isOdd()) System.out.println("O");
-            else System.out.println("X");
-        }
-    }
 
+        System.out.println(total - mst);
+    }
 }
