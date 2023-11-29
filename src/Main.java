@@ -1,61 +1,45 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-
-    static String s1, s2;
-    static int[][] dp;
-    static String s = "";
+    static int N, M, K, count = 0;
+    static boolean[] visit;
+    static Integer[] memo;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        s1 = br.readLine();
-        s2 = br.readLine();
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        dp = new int[s1.length() + 1][s2.length() + 1];
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-        for (int i = 1; i <= s1.length(); i++) {
-            for (int j = 1; j <= s2.length(); j++) {
-                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    if (dp[i - 1][j] > dp[i][j - 1]) {
-                        dp[i][j] = dp[i - 1][j];
-                    } else {
-                        dp[i][j] = dp[i][j - 1];
-                    }
-                }
+        visit = new boolean[N + 1];
+        memo = new Integer[N + 1];
+        memo[0] = 1;
+
+        for (int i = 0; i < K; i++) {
+            int j = Integer.parseInt(br.readLine());
+            visit[j] = true;
+        }
+
+        System.out.println(check(N));
+    }
+
+    static int check(int n) {
+        if (n < 0) {
+            return 0;
+        }
+        if (memo[n] != null) {
+            return memo[n];
+        }
+        if (!visit[n]) {
+            for (int i = 1; i <= M; i++) {
+                count += check(n - i);
             }
         }
-
-        int i = s1.length();
-        int j = s2.length();
-
-        for (; i > 0 && j > 0; ) {
-            if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
-                s += s1.charAt(i - 1);
-                i--;
-                j--;
-            } else {
-                if (dp[i][j - 1] > dp[i - 1][j]) {
-                    j--;
-                } else {
-                    i--;
-                }
-            }
-        }
-
-        String reverse = "";
-        for (int n = s.length() - 1; n >= 0; n--) {
-            reverse = reverse + s.charAt(n);
-        }
-
-
-        if (s.length() == 0) {
-            System.out.println("NONE");
-        } else {
-            System.out.println(reverse.toString());
-        }
+        return memo[n] = count;
     }
 }
